@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AlwaysOkWebhook;
+use App\Http\Middleware\AuthenticateHorizonAccess;
 use App\Http\Middleware\AuthenticateTelescopeAccess;
 use App\Http\Middleware\VerifyTelegramIp;
 use Illuminate\Foundation\Application;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('telegram', [VerifyTelegramIp::class, AlwaysOkWebhook::class]);
         $middleware->alias([
             'telescope.auth' => AuthenticateTelescopeAccess::class,
+            'horizon.auth' => AuthenticateHorizonAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

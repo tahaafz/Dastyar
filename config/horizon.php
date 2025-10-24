@@ -70,7 +70,10 @@ return [
     |
     */
 
-    'middleware' => ['web'],
+    'middleware' => ['web', 'horizon.auth'],
+
+    'username' => env('HORIZON_ADMIN_USERNAME', env('TELESCOPE_ADMIN_USERNAME', 'admin')),
+    'password' => env('HORIZON_ADMIN_PASSWORD', env('TELESCOPE_ADMIN_PASSWORD', 'password@1234')),
 
     /*
     |--------------------------------------------------------------------------
