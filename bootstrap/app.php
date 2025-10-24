@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AlwaysOkWebhook;
+use App\Http\Middleware\AuthenticateTelescopeAccess;
 use App\Http\Middleware\VerifyTelegramIp;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->group('telegram', [VerifyTelegramIp::class, AlwaysOkWebhook::class]);
+        $middleware->web(
+            prepend: AuthenticateTelescopeAccess::class
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

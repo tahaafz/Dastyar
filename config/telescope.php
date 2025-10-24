@@ -94,7 +94,7 @@ return [
 
     'middleware' => [
         'web',
-        Authorize::class,
+//        Authorize::class,
     ],
 
     /*
@@ -132,6 +132,8 @@ return [
     | a request or task is executed. Feel free to customize this list.
     |
     */
+    'username' => env('TELESCOPE_ADMIN_USERNAME', 'admin'),
+    'password' => env('TELESCOPE_ADMIN_PASSWORD', 'password@1234'),
 
     'watchers' => [
         Watchers\BatchWatcher::class => env('TELESCOPE_BATCH_WATCHER', true),
