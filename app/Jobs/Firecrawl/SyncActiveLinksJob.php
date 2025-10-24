@@ -10,6 +10,7 @@ use App\Services\Firecrawl\Support\DurationParser;
 use App\Services\Telegram\LinkResultMessenger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -127,13 +128,43 @@ class SyncActiveLinksJob implements ShouldQueue
             $record = $existing->get($url);
 
             if ($record === null) {
-                $record = $link->linkResults()->create([
-                    'title'   => $title,
-                    'city'    => $city,
-                    'price'   => $price,
-                    'link'    => $url,
-                    'payload' => $payload,
-                ]);
+                try {
+                    $record = $link->linkResults()->create([
+                        'title'   => $title,
+                        'city'    => $city,
+                        'price'   => $price,
+                        'link'    => $url,
+                        'payload' => $payload,
+                    ]);
+                } catch (QueryException $e) {
+                    if ($e->getCode() !== '23000') {
+                        throw $e;
+                    }
+
+                    $record = $link->linkResults()
+                        ->where('link', $url)
+                        ->first();
+
+                    if (!$record) {
+                        continue;
+                    }
+
+                    $record->fill([
+                        'title'   => $title,
+                        'city'    => $city,
+                        'price'   => $price,
+                        'payload' => $payload,
+                    ]);
+
+                    if ($record->isDirty(['title', 'city', 'price', 'payload'])) {
+                        $record->save();
+                        $changes[] = $record;
+                    }
+
+                    $existing->put($url, $record);
+                    continue;
+                }
+
                 $existing->put($url, $record);
                 $changes[] = $record;
                 continue;
