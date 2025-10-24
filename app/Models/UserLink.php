@@ -4,13 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\DivarResult;
 use App\Models\LinkResult;
 
 class UserLink extends Model
 {
-    use HasFactory;
-
     public const STATUS_INACTIVE = 'inactive';
     public const STATUS_ACTIVE   = 'active';
 
@@ -41,10 +38,6 @@ class UserLink extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function divarResults()
-    {
-        return $this->hasMany(DivarResult::class);
-    }
 
     public function linkResults()
     {

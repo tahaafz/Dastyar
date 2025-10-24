@@ -102,6 +102,7 @@ class SyncActiveLinksJob implements ShouldQueue
         }
 
         $existing = $link->linkResults()->get()->keyBy('link');
+        $seen = [];
 
         $changes = [];
 
@@ -114,6 +115,11 @@ class SyncActiveLinksJob implements ShouldQueue
                 continue;
             }
 
+            if (isset($seen[$url])) {
+                continue;
+            }
+            $seen[$url] = true;
+
             $city = $payload['city'] ?? null;
             $price = $payload['price'] ?? null;
 
@@ -121,13 +127,15 @@ class SyncActiveLinksJob implements ShouldQueue
             $record = $existing->get($url);
 
             if ($record === null) {
-                $changes[] = $link->linkResults()->create([
+                $record = $link->linkResults()->create([
                     'title'   => $title,
                     'city'    => $city,
                     'price'   => $price,
                     'link'    => $url,
                     'payload' => $payload,
                 ]);
+                $existing->put($url, $record);
+                $changes[] = $record;
                 continue;
             }
 
@@ -140,6 +148,7 @@ class SyncActiveLinksJob implements ShouldQueue
 
             if ($record->isDirty(['title', 'city', 'price', 'payload'])) {
                 $record->save();
+                $existing->put($url, $record);
                 $changes[] = $record;
             }
         }
