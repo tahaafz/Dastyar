@@ -51,6 +51,12 @@ class CollectLink extends AbstractState
             return;
         }
 
+        $chatId = $user->telegram_chat_id;
+        $messageId = data_get($u, 'message.message_id');
+        if ($chatId && $messageId) {
+            $this->tgReact($chatId, (int) $messageId, [['type' => 'emoji', 'emoji' => '👀']], true);
+        }
+
         $link = app(UserLinkManager::class)->ensureInactiveLink($user, $normalized);
         $data = (array) ($user->tg_data ?? []);
 

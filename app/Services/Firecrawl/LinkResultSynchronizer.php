@@ -37,14 +37,20 @@ class LinkResultSynchronizer
             $city = $payload['city'] ?? null;
             $price = $payload['price'] ?? null;
 
-            /** @var LinkResult|null $record */
             $record = $existing->get($url);
 
             if ($record === null) {
-                $record = $this->createRecord($link, $title, $city, $price, $url, $payload, $existing, $updated);
-                if ($record) {
-                    $created[] = $record;
-                }
+                $this->createRecord(
+                    link: $link,
+                    title: $title,
+                    city: $city,
+                    price: $price,
+                    url: $url,
+                    payload: $payload,
+                    existing: $existing,
+                    created: $created,
+                    updated: $updated
+                );
                 continue;
             }
 
@@ -81,10 +87,6 @@ class LinkResultSynchronizer
         return is_array($ads) ? $ads : [];
     }
 
-    /**
-     * @param \Illuminate\Support\Collection<string, LinkResult> $existing
-     * @param array<int, LinkResult>                              $updated
-     */
     private function createRecord(
         UserLink $link,
         string $title,
@@ -93,8 +95,9 @@ class LinkResultSynchronizer
         string $url,
         array $payload,
         Collection $existing,
+        array &$created,
         array &$updated
-    ): ?LinkResult {
+    ): void {
         try {
             $record = $link->linkResults()->create([
                 'title'   => $title,
@@ -106,7 +109,9 @@ class LinkResultSynchronizer
 
             $existing->put($url, $record);
 
-            return $record;
+            $created[] = $record;
+
+            return;
         } catch (QueryException $exception) {
             if ($exception->getCode() !== '23000') {
                 throw $exception;
@@ -115,7 +120,7 @@ class LinkResultSynchronizer
             /** @var LinkResult|null $record */
             $record = $link->linkResults()->where('link', $url)->first();
             if (!$record) {
-                return null;
+                return;
             }
 
             $record->fill([
@@ -132,7 +137,7 @@ class LinkResultSynchronizer
 
             $existing->put($url, $record);
 
-            return $record;
+            return;
         }
     }
 }
