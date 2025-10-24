@@ -40,19 +40,31 @@ class UserLinkManager
         ]);
     }
 
-    public function finalizePendingLink(User $user, ?string $duration): ?UserLink
+    public function finalizePendingLink(User $user, ?string $duration, ?string $fallbackUrl = null): ?UserLink
     {
         $data = (array) ($user->tg_data ?? []);
         $linkId = (int) ($data['pending_link_id'] ?? 0);
 
-        if ($linkId <= 0) {
-            return null;
+        if ($linkId > 0) {
+            $link = UserLink::query()
+                ->where('id', $linkId)
+                ->where('user_id', $user->id)
+                ->first();
+        } else {
+            $link = null;
         }
 
-        $link = UserLink::query()
-            ->where('id', $linkId)
-            ->where('user_id', $user->id)
-            ->first();
+        if (!$link && $fallbackUrl) {
+            $link = UserLink::query()
+                ->where('user_id', $user->id)
+                ->where('url', $fallbackUrl)
+                ->orderByDesc('id')
+                ->first();
+
+            if (!$link) {
+                $link = $this->ensureInactiveLink($user, $fallbackUrl);
+            }
+        }
 
         if (!$link) {
             return null;

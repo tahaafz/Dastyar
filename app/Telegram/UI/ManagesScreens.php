@@ -25,12 +25,12 @@ trait ManagesScreens
         }
     }
 
-    protected function sendAnchor(string $textOrKey, array $inline): void
+    protected function sendAnchor(string $textOrKey, array $inline, array $vars = []): void
     {
         $user = $this->process();
         $sent = Telegram::sendMessage([
             'chat_id'      => $user->telegram_chat_id,
-            'text'         => Msg::resolve($textOrKey),
+            'text'         => Msg::resolve($textOrKey, $vars),
             'reply_markup' => $this->normalizeMarkup($inline),
             'parse_mode'   => 'HTML',
         ]);
@@ -38,7 +38,7 @@ trait ManagesScreens
         $user->save();
     }
 
-    protected function ensureInlineScreen(string $textOrKey, array $inline, bool $resetAnchor = false): void
+    protected function ensureInlineScreen(string $textOrKey, array $inline, bool $resetAnchor = false, array $vars = []): void
     {
         $user = $this->process();
 
@@ -50,12 +50,12 @@ trait ManagesScreens
             Telegram::editMessageText([
                 'chat_id'      => $user->telegram_chat_id,
                 'message_id'   => $user->tg_last_message_id,
-                'text'         => Msg::resolve($textOrKey),
+                'text'         => Msg::resolve($textOrKey, $vars),
                 'reply_markup' => $this->normalizeMarkup($inline),
                 'parse_mode'   => 'HTML',
             ]);
         } else {
-            $this->sendAnchor($textOrKey, $inline);
+            $this->sendAnchor($textOrKey, $inline, $vars);
         }
     }
 

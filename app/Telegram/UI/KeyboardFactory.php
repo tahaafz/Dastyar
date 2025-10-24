@@ -7,13 +7,16 @@ final class KeyboardFactory
     public static function replyMain(): array
     {
         return [
-            'keyboard' => [[
-                __('telegram.buttons.buy'),
-                __('telegram.buttons.support'),
-                __('telegram.buttons.manage'),
-            ],[
-                __('telegram.buttons.topup'),
-            ]],
+            'keyboard' => [
+                [
+                    __('telegram.buttons.buy'),
+                    __('telegram.buttons.support'),
+                ],
+                [
+                    __('telegram.buttons.active_links'),
+                    __('telegram.buttons.topup'),
+                ],
+            ],
             'resize_keyboard'   => true,
             'one_time_keyboard' => false,
         ];

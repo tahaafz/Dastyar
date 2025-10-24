@@ -31,7 +31,9 @@ class Submit extends AbstractState
             ? (string) $choices['buy.duration']
             : null;
 
-        $link = app(UserLinkManager::class)->finalizePendingLink($user, $duration);
+        $linkUrl = isset($choices['buy.link']) ? (string) $choices['buy.link'] : null;
+
+        $link = app(UserLinkManager::class)->finalizePendingLink($user, $duration, $linkUrl);
 
         unset($data['pending_link_id']);
         $user->forceFill(['tg_data' => $data])->save();

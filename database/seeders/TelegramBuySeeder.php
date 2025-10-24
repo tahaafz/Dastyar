@@ -42,7 +42,7 @@ class TelegramBuySeeder extends Seeder
                     ['title' => '۱۲ ساعت', 'code' => 'duration-12h', 'price' => 0, 'sort' => 'beside'],
                     ['title' => '۶ ساعت',  'code' => 'duration-6h',  'price' => 0, 'sort' => 'below'],
                     ['title' => '۳ ساعت - ۱۵۰۰۰ تومان',  'code' => 'duration-3h',  'price' => 15000, 'sort' => 'below'],
-                    ['title' => '۱ ساعت - ۳۵۰۰۰ تومان',  'code' => 'duration-1h',  'price' => 25000, 'sort' => 'below'],
+                    ['title' => '۱ ساعت - ۲۵۰۰۰ تومان',  'code' => 'duration-1h',  'price' => 25000, 'sort' => 'below'],
                 ],
                 'buy.review' => [
                     ['title' => 'تایید سفارش', 'code' => 'review-confirm', 'price' => 0, 'sort' => 'beside'],

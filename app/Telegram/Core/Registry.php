@@ -19,6 +19,7 @@ final class Registry
             StateKey::BuyConfirm->value        => \App\Telegram\States\Buy\Confirm::class,
             StateKey::BuySubmit->value         => \App\Telegram\States\Buy\Submit::class,
             StateKey::ServersList->value       => \App\Telegram\States\Servers\ListServers::class,
+            StateKey::LinksActive->value       => \App\Telegram\States\Links\ActiveLinks::class,
             StateKey::WalletEnterAmount->value => \App\Telegram\States\Wallet\EnterAmount::class,
             StateKey::WalletWaitReceipt->value => \App\Telegram\States\Wallet\WaitReceipt::class,
         ];

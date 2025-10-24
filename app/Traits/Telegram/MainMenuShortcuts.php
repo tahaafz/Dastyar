@@ -10,8 +10,8 @@ trait MainMenuShortcuts
 
         $buyLabel     = __('telegram.buttons.buy');
         $supportLabel = __('telegram.buttons.support');
-        $manageLabel  = __('telegram.buttons.manage');
         $topupLabel   = __('telegram.buttons.topup');
+        $activeLinks  = __('telegram.buttons.active_links');
         $backMain     = __('telegram.buttons.back_main');
 
         switch ($text) {
@@ -27,10 +27,10 @@ trait MainMenuShortcuts
                 $this->goKey('support');
                 return true;
 
-            case $manageLabel:
+            case $activeLinks:
                 $this->expireInlineScreen();
                 $this->newFlow();
-                $this->goKey('servers.list');
+                $this->goKey('links.active');
                 return true;
 
             case $topupLabel:

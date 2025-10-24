@@ -15,6 +15,7 @@ enum StateKey: string
     case BuySubmit        = 'buy.submit';
 
     case ServersList       = 'servers.list';
+    case LinksActive       = 'links.active';
 
     case WalletEnterAmount = 'wallet.enter_amount';
     case WalletWaitReceipt = 'wallet.wait_receipt';

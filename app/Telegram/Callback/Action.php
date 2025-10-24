@@ -17,4 +17,7 @@ enum Action: string
     case CheckoutTopup   = 'checkout.topup';  // رفتن به WaitReceipt
     case CheckoutSubmit  = 'checkout.submit'; //
     case LinkLimitConfirm= 'buy.limit.confirm';
+    case ActiveLinkShow  = 'links.show';
+    case ActiveLinkDelete= 'links.delete';
+    case ActiveLinkList  = 'links.list';
 }
