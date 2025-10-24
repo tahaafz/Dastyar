@@ -13,10 +13,8 @@ class AuthenticateTelescopeAccess
 
     public function handle(Request $request, Closure $next): mixed
     {
-        $config = config('custom.admin.telescope');
-
-        $username = @$config['username'];
-        $password = @$config['password'];
+        $username = (string) config('telescope.username');
+        $password = (string) config('telescope.password');
 
         if (
             !$this->isSecureConnection($request) ||
