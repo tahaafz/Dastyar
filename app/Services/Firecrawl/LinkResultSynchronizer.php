@@ -4,6 +4,7 @@ namespace App\Services\Firecrawl;
 
 use App\Models\LinkResult;
 use App\Models\UserLink;
+use App\Support\Helpers\Normalize;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 
@@ -54,15 +55,15 @@ class LinkResultSynchronizer
                 continue;
             }
 
-            $currentTitle = $this->normalizeTitle($record->title);
-            $incomingTitle = $this->normalizeTitle($title);
+            $currentTitle = Normalize::text($record->title);
+            $incomingTitle = Normalize::text($title);
 
             if ($currentTitle !== $incomingTitle) {
                 continue;
             }
 
-            $currentPrice = (string) ($record->price ?? '');
-            $incomingPrice = (string) ($price ?? '');
+            $currentPrice = Normalize::price($record->price);
+            $incomingPrice = Normalize::price($price);
 
             if ($incomingPrice !== $currentPrice) {
                 $record->price = $price;
@@ -128,15 +129,15 @@ class LinkResultSynchronizer
                 return;
             }
 
-            $currentTitle = $this->normalizeTitle($record->title);
-            $incomingTitle = $this->normalizeTitle($title);
+            $currentTitle = Normalize::text($record->title);
+            $incomingTitle = Normalize::text($title);
 
             if ($currentTitle !== $incomingTitle) {
                 return;
             }
 
-            $currentPrice = (string) ($record->price ?? '');
-            $incomingPrice = (string) ($price ?? '');
+            $currentPrice = Normalize::price($record->price);
+            $incomingPrice = Normalize::price($price);
 
             if ($incomingPrice !== $currentPrice) {
                 $record->price = $price;
@@ -151,9 +152,4 @@ class LinkResultSynchronizer
         }
     }
 
-    private function normalizeTitle(?string $title): string
-    {
-        $normalized = trim((string) $title);
-        return mb_strtolower($normalized, 'UTF-8');
-    }
 }
