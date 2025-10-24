@@ -25,7 +25,6 @@ final class FirecrawlService
 
         $defaults = $config['defaults'] ?? [
             'only_main_content' => false,
-            'proxy'             => 'auto',
             'store_in_cache'    => true,
             'include_tags'      => [],
             'exclude_tags'      => ['nav', 'footer', 'header', '.ads', '#banner'],
