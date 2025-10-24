@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateTelescopeAccess
 {
-    const MAX_ATTEMPTS = 5;
+    const MAX_ATTEMPTS = 10;
 
     public function handle(Request $request, Closure $next): mixed
     {
