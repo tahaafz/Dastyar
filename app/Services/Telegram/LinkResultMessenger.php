@@ -4,10 +4,13 @@ namespace App\Services\Telegram;
 
 use App\Models\LinkResult;
 use App\Models\User;
-use Telegram\Bot\Laravel\Facades\Telegram;
+use App\Telegram\UI\KeyboardFactory;
+use App\Traits\Telegram\TgApi;
 
 class LinkResultMessenger
 {
+    use TgApi;
+
     /**
      * @param iterable<LinkResult> $results
      */
@@ -27,14 +30,11 @@ class LinkResultMessenger
             return;
         }
 
-        $payload = implode("\n\n", $messages);
-
-        Telegram::sendMessage([
-            'chat_id' => $chatId,
-            'text' => $payload,
-            'parse_mode' => 'HTML',
-            'disable_web_page_preview' => true,
-        ]);
+        $this->tgSend(
+            $chatId,
+            implode("\n\n", $messages),
+            KeyboardFactory::replyMain()
+        );
     }
 
     private function formatMessage(LinkResult $result): string

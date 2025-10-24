@@ -3,6 +3,7 @@
 namespace App\Telegram\States\Links;
 
 use App\Enums\Telegram\StateKey;
+use App\Jobs\Firecrawl\SyncActiveLinksJob;
 use App\Models\UserLink;
 use App\Telegram\Callback\Action;
 use App\Telegram\Core\AbstractState;
@@ -150,6 +151,8 @@ final class ActiveLinks extends AbstractState
             'expires_at' => null,
             'last_synced_at' => null,
         ])->save();
+
+        SyncActiveLinksJob::purgeScheduled($link->id);
 
         $this->renderList();
     }

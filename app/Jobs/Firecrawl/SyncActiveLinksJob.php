@@ -15,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Throwable;
 
 class SyncActiveLinksJob implements ShouldQueue
@@ -195,4 +195,56 @@ class SyncActiveLinksJob implements ShouldQueue
         static::dispatch($link->id)->delay($nextRun);
     }
 
+    public static function purgeScheduled(int $userLinkId): void
+    {
+        $config = config('queue.connections.redis', []);
+
+        $connection = $config['connection'] ?? 'default';
+        $queueName  = $config['queue'] ?? 'default';
+
+        $redis = Redis::connection($connection);
+
+        $pendingKey = 'queues:'.$queueName;
+        $delayedKey = $pendingKey.':delayed';
+
+        $pending = $redis->lrange($pendingKey, 0, -1);
+        foreach ($pending as $payload) {
+            if (self::payloadMatches($payload, $userLinkId)) {
+                $redis->lrem($pendingKey, 0, $payload);
+            }
+        }
+
+        $delayed = $redis->zrange($delayedKey, 0, -1);
+        foreach ($delayed as $payload) {
+            if (self::payloadMatches($payload, $userLinkId)) {
+                $redis->zrem($delayedKey, $payload);
+            }
+        }
+    }
+
+    private static function payloadMatches(string $payload, int $userLinkId): bool
+    {
+        $data = json_decode($payload, true);
+        if (!is_array($data)) {
+            return false;
+        }
+
+        $encoded = $data['data']['command'] ?? null;
+        if (!is_string($encoded)) {
+            return false;
+        }
+
+        $serialized = base64_decode($encoded, true);
+        if ($serialized === false) {
+            return false;
+        }
+
+        try {
+            $instance = unserialize($serialized);
+        } catch (Throwable) {
+            return false;
+        }
+
+        return $instance instanceof self && $instance->userLinkId === $userLinkId;
+    }
 }
