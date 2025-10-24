@@ -152,8 +152,6 @@ final class ActiveLinks extends AbstractState
             'last_synced_at' => null,
         ])->save();
 
-        SyncActiveLinksJob::purgeScheduled($link->id);
-
         $this->renderList();
     }
 

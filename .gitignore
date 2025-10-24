@@ -36,3 +36,5 @@ laradumps.yaml
 /project.zip
 /.idea/
 /.idea/commandlinetools/
+rr
+.rr.yaml
