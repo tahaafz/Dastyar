@@ -19,6 +19,9 @@ abstract class CategoryDrivenState extends DeclarativeState
 
     protected bool $resetCartOnEnter = false;
 
+    /** @var array<string, mixed>|null */
+    private ?array $lastUpdate = null;
+
     protected function screen(): array
     {
         return [];
@@ -63,6 +66,8 @@ abstract class CategoryDrivenState extends DeclarativeState
 
     public function onCallback(string $callbackData, array $u): void
     {
+        $this->lastUpdate = $u;
+
         $parsed = $this->cbParse($callbackData, $u);
         if (!$parsed) {
             return;
@@ -109,6 +114,8 @@ abstract class CategoryDrivenState extends DeclarativeState
 
     public function onText(string $text, array $u): void
     {
+        $this->lastUpdate = $u;
+
         if ($this->interceptShortcuts($text)) {
             return;
         }
@@ -142,6 +149,17 @@ abstract class CategoryDrivenState extends DeclarativeState
         }
 
         $this->silent();
+    }
+
+    protected function silent(): void
+    {
+        if (!$this->lastUpdate) {
+            return;
+        }
+
+        if ($callbackId = data_get($this->lastUpdate, 'callback_query.id')) {
+            $this->tgToast((string) $callbackId, '', false, 0);
+        }
     }
 
     protected function handleBack(StateKey $prev): void

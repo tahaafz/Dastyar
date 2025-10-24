@@ -8,22 +8,31 @@ trait FlowToken
 {
     use TgApi;
 
-    protected function newFlow(): string
+    protected function newFlow(int $length = 6, string $key = 'flow_id'): string
     {
-        $p = $this->process();
-        $d = $p->tg_data ?? [];
-        $d['flow_id'] = Str::upper(Str::random(6));
-        unset($d['plan'], $d['plan_code'], $d['region_id'], $d['os_image_id'], $d['vm_name'], $d['login_pass']);
-        $d['provider'] = $d['provider'] ?? 'gcore';
-        $p->tg_data = $d; $p->save();
-        return $d['flow_id'];
+        $length = max(1, min(32, $length));
+
+        $state = $this->process();
+        $data = (array) ($state->tg_data ?? []);
+
+        $token = $this->makeToken($length);
+
+        $data[$key] = $token;
+        $state->forceFill(['tg_data' => $data])->save();
+
+        return $token;
     }
 
     protected function flow(): string
     {
-        $p = $this->process();
-        $d = $p->tg_data ?? [];
-        return $d['flow_id'] ?? $this->newFlow();
+        $state = $this->process();
+        $data = (array) ($state->tg_data ?? []);
+
+        if (isset($data['flow_id']) && is_string($data['flow_id'])) {
+            return $data['flow_id'];
+        }
+
+        return $this->newFlow();
     }
 
     protected function pack(string $payload): string
@@ -58,5 +67,19 @@ trait FlowToken
             return [false, null];
         }
         return [true, $rest];
+    }
+
+    private function makeToken(int $length): string
+    {
+        // 0-9 A-Z without confusing characters
+        $alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $maxIndex = strlen($alphabet) - 1;
+
+        $token = '';
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $alphabet[random_int(0, $maxIndex)];
+        }
+
+        return $token;
     }
 }

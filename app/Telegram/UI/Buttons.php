@@ -8,9 +8,8 @@ final class Buttons
 {
     private static array $defaults = [
         'back'                   => '⬅️ Back',
-        'buy'                    => 'Buy VPS',
+        'buy'                    => 'دیوار',
         'support'                => 'Support',
-        'manage'                 => 'Manage servers',
         'management'             => 'Management',
         'topup'                  => 'Add balance',
         'approve'                => '✅ Approve',
@@ -19,22 +18,8 @@ final class Buttons
         'reply'                  => '✍️ Reply',
         'channel.join'          => 'Join Channel',
         'channel.check'         => '✅ Joined, Check',
-        'servers.manage_button' => '📋 Manage Server',
-        'servers.panel.refresh' => '🔄 Refresh',
-        'servers.panel.delete'  => '🗑 Delete',
-        'servers.panel.list'    => '⬅️ List',
-        'servers.panel.power_off' => '🔌 Power Off',
-        'servers.panel.power_on'  => '⚡️ Power On',
         'buy.confirm_and_send'  => '✅ Confirm & Submit',
         'buy.back'              => '⬅️ Back',
-        'buy.plan1'             => 'Plan 1',
-        'buy.plan2'             => 'Plan 2',
-        'os.ubuntu20'           => 'Ubuntu 20',
-        'os.ubuntu22'           => 'Ubuntu 22',
-        'provider.gcore'        => 'GCore',
-        'locations.dubai'       => '🇦🇪 Dubai',
-        'locations.london'      => '🇬🇧 London',
-        'locations.frankfurt'   => '🇩🇪 Frankfurt',
     ];
 
     public static function label(string $key, ?string $fallback = null): string

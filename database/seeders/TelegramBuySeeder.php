@@ -12,11 +12,17 @@ class TelegramBuySeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+            $obsoleteSlugs = ['buy.provider', 'buy.plan', 'buy.location', 'buy.os'];
+            Category::query()
+                ->whereIn('slug', $obsoleteSlugs)
+                ->get()
+                ->each(function (Category $category) {
+                    $category->states()->delete();
+                    $category->delete();
+                });
+
             $categories = [
-                ['slug' => 'buy.provider', 'title_key' => 'telegram.buy.choose_provider'],
-                ['slug' => 'buy.plan',     'title_key' => 'telegram.buy.choose_plan'],
-                ['slug' => 'buy.location', 'title_key' => 'telegram.buy.choose_location'],
-                ['slug' => 'buy.os',       'title_key' => 'telegram.buy.choose_os'],
+                ['slug' => 'buy.duration', 'title_key' => 'telegram.buy.choose_duration'],
                 ['slug' => 'buy.review',   'title_key' => 'telegram.buy.review'],
             ];
 
@@ -31,24 +37,12 @@ class TelegramBuySeeder extends Seeder
 
 
             $buttons = [
-                'buy.provider' => [
-                    ['title' => 'Alpha', 'code' => 'provider-alpha', 'price' => 0, 'sort' => 'beside'],
-                    ['title' => 'Beta',  'code' => 'provider-beta',  'price' => 0, 'sort' => 'beside'],
-                    ['title' => 'Gamma', 'code' => 'provider-gamma', 'price' => 0, 'sort' => 'below'],
-                ],
-                'buy.plan' => [
-                    ['title' => 'پلن پایه',   'code' => 'plan-basic', 'price' => 100000, 'sort' => 'beside'],
-                    ['title' => 'پلن حرفه‌ای', 'code' => 'plan-pro',   'price' => 200000, 'sort' => 'beside'],
-                    ['title' => 'پلن ویژه',    'code' => 'plan-ultra', 'price' => 350000, 'sort' => 'below'],
-                ],
-                'buy.location' => [
-                    ['title' => '🇩🇪 آلمان', 'code' => 'loc-de', 'price' => 0, 'sort' => 'beside'],
-                    ['title' => '🇫🇷 فرانسه', 'code' => 'loc-fr', 'price' => 0, 'sort' => 'beside'],
-                    ['title' => '🇺🇸 آمریکا', 'code' => 'loc-us', 'price' => 0, 'sort' => 'below'],
-                ],
-                'buy.os' => [
-                    ['title' => 'Android', 'code' => 'os-android', 'price' => 0, 'sort' => 'beside'],
-                    ['title' => 'iOS',     'code' => 'os-ios',     'price' => 0, 'sort' => 'beside'],
+                'buy.duration' => [
+                    ['title' => '۲۴ ساعت', 'code' => 'duration-24h', 'price' => 0, 'sort' => 'beside'],
+                    ['title' => '۱۲ ساعت', 'code' => 'duration-12h', 'price' => 0, 'sort' => 'beside'],
+                    ['title' => '۶ ساعت',  'code' => 'duration-6h',  'price' => 0, 'sort' => 'below'],
+                    ['title' => '۳ ساعت - ۱۵۰۰۰ تومان',  'code' => 'duration-3h',  'price' => 15000, 'sort' => 'below'],
+                    ['title' => '۱ ساعت - ۳۵۰۰۰ تومان',  'code' => 'duration-1h',  'price' => 25000, 'sort' => 'below'],
                 ],
                 'buy.review' => [
                     ['title' => 'تایید سفارش', 'code' => 'review-confirm', 'price' => 0, 'sort' => 'beside'],

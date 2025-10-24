@@ -31,6 +31,8 @@ return [
     |             ]
     */
     'secret' => env('TELEGRAM_BOT_SECRET', 'YOUR-BOT-SECRET'),
+    'bot_username' => env('TELEGRAM_BOT_USERNAME', 'dastyarwebbot'),
+    'deeplink_ttl' => (int) env('TELEGRAM_DEEPLINK_TTL', 1800),
     'user' => [
         'user_id' => env('ADMIN_USER_ID', 'default'),
         'name' => env('ADMIN_NAME', 'default'),

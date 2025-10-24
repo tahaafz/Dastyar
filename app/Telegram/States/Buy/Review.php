@@ -17,15 +17,18 @@ class Review extends CategoryDrivenState
     {
         $sum = (new Calculator())->summarize($user);
         $data = (array) ($user->tg_data ?? []);
-        $choices    = (array) ($data['choices_ids'] ?? []);
+        $choiceIds  = (array) ($data['choices_ids'] ?? []);
         $savedTexts = (array) ($data['choices'] ?? []);
 
-        $labels = $this->resolveSelections($choices, [
-            'buy.provider' => 'provider',
-            'buy.plan'     => 'plan',
-            'buy.location' => 'location',
-            'buy.os'       => 'os',
+        $labels = $this->resolveSelections($choiceIds, [
+            'buy.duration' => 'duration',
         ], $savedTexts);
+
+        $labels['link'] = htmlspecialchars(
+            (string) ($savedTexts['buy.link'] ?? __('telegram.buy.review_missing')),
+            ENT_QUOTES,
+            'UTF-8'
+        );
 
         return array_merge($labels, [
             'cart'    => number_format($sum['cart']),
@@ -44,11 +47,12 @@ class Review extends CategoryDrivenState
         foreach ($map as $slug => $alias) {
             $state = $states->get($choiceIds[$slug] ?? null);
             if ($state) {
-                $result[$alias] = (string) $state->title;
+                $result[$alias] = htmlspecialchars((string) $state->title, ENT_QUOTES, 'UTF-8');
                 continue;
             }
 
-            $result[$alias] = $savedTexts[$slug] ?? __('telegram.buy.review_missing');
+            $fallback = $savedTexts[$slug] ?? __('telegram.buy.review_missing');
+            $result[$alias] = htmlspecialchars((string) $fallback, ENT_QUOTES, 'UTF-8');
         }
 
         return $result;

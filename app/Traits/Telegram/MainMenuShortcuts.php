@@ -18,7 +18,7 @@ trait MainMenuShortcuts
             case $buyLabel:
                 $this->expireInlineScreen();
                 $this->newFlow();
-                $this->goKey('buy.provider');
+                $this->goKey('buy.link');
                 return true;
 
             case $supportLabel:

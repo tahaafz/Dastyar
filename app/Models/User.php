@@ -15,12 +15,16 @@ class User extends Authenticatable
         'tg_current_state', 'tg_data', 'tg_last_message_id',
         'is_admin',
         'is_blocked', 'blocked_reason', 'message_count', 'last_message_at',
+        'balance', 'cart_total', 'links_limit',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'tg_data' => 'array',
         'last_message_at' => 'datetime',
+        'balance' => 'integer',
+        'cart_total' => 'integer',
+        'links_limit' => 'integer',
     ];
 
     public function servers()
@@ -29,4 +33,5 @@ class User extends Authenticatable
     }
     public function topups() { return $this->hasMany(\App\Models\TopupRequest::class); }
     public function walletTransactions() { return $this->hasMany(\App\Models\WalletTransaction::class); }
+    public function links() { return $this->hasMany(\App\Models\UserLink::class); }
 }
