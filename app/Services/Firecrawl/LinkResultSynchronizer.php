@@ -54,14 +54,19 @@ class LinkResultSynchronizer
                 continue;
             }
 
-            $record->fill([
-                'title'   => $title,
-                'city'    => $city,
-                'price'   => $price,
-                'payload' => $payload,
-            ]);
+            $currentTitle = $this->normalizeTitle($record->title);
+            $incomingTitle = $this->normalizeTitle($title);
 
-            if ($record->isDirty(['title', 'city', 'price', 'payload'])) {
+            if ($currentTitle !== $incomingTitle) {
+                continue;
+            }
+
+            $currentPrice = (string) ($record->price ?? '');
+            $incomingPrice = (string) ($price ?? '');
+
+            if ($incomingPrice !== $currentPrice) {
+                $record->price = $price;
+                $record->payload = $payload;
                 $record->save();
                 $existing->put($url, $record);
                 $updated[] = $record;
@@ -123,14 +128,19 @@ class LinkResultSynchronizer
                 return;
             }
 
-            $record->fill([
-                'title'   => $title,
-                'city'    => $city,
-                'price'   => $price,
-                'payload' => $payload,
-            ]);
+            $currentTitle = $this->normalizeTitle($record->title);
+            $incomingTitle = $this->normalizeTitle($title);
 
-            if ($record->isDirty(['title', 'city', 'price', 'payload'])) {
+            if ($currentTitle !== $incomingTitle) {
+                return;
+            }
+
+            $currentPrice = (string) ($record->price ?? '');
+            $incomingPrice = (string) ($price ?? '');
+
+            if ($incomingPrice !== $currentPrice) {
+                $record->price = $price;
+                $record->payload = $payload;
                 $record->save();
                 $updated[] = $record;
             }
@@ -139,5 +149,11 @@ class LinkResultSynchronizer
 
             return;
         }
+    }
+
+    private function normalizeTitle(?string $title): string
+    {
+        $normalized = trim((string) $title);
+        return mb_strtolower($normalized, 'UTF-8');
     }
 }
